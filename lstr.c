@@ -20,8 +20,9 @@ Lstr ls_cria(){
     return new;
 }
 
-void ls_destroi(){
-
+void ls_destroi(Lstr self){
+    //liberar as strings da lista primeiro
+    free(self);
 }
 
 bool ls_vazia(Lstr self){
@@ -64,6 +65,15 @@ void ls_posiciona(Lstr self, int pos){
 
 bool ls_avanca(Lstr self){
     if(self->pos < self->tam) self->pos += 1;
-    if(self->pos == self->tam) return false;
-    return true;
+    return (self->pos < self->tam);
+}
+
+bool ls_recua(Lstr self){
+    if(self->pos > -1) self->pos -= 1;
+    return (self->pos > -1);
+}
+
+
+void ls_insere_antes(Lstr self, str cad){
+    
 }
