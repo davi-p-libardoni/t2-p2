@@ -10,15 +10,20 @@ struct lstr
     int tamb; // quantidade de bytes usados
     int cap; // quantidade de bytes alocados para strings
     int pos; // posição corrente
-    str mem[]; // memória
+    int *div; // índice das separações entre strings 
+    str *mem; // memória
 };
 
+static void ls_realloc(Lstr self,int newsize){
+
+}
 
 Lstr ls_cria(){
-    Lstr new = (Lstr*)malloc(4*8+64);
-    new->cap = 64;
+    Lstr new = malloc(sizeof(Lstr));
+    new->cap = 8 * sizeof(str);
     new->tam = 0;
     new->tamb = 0;
+    new->mem = malloc(8*sizeof(str));
     new->pos = -1;
     return new;
 }
@@ -81,5 +86,28 @@ void ls_insere_antes(Lstr self, str cad){
     int newpos = self->pos - 1;
     if(self->pos < 0) newpos = 0;
     if(self->pos >= self->tam) newpos = self->tam;
-    //memmove();
+    if(self->cap < self->tamb + cad.tamb){
+        ls_realloc(self,self->tamb + cad.tamb);
+    }
+    if(self->tam > newpos){
+        // memmove();
+    }
+    self->mem[newpos] = cad;
+    self->pos = newpos;
+    self->tam += 1;
+    self->tamb += cad.tamb;
+}
+
+void ls_insere_depois(Lstr self, str cad){
+
+}
+
+int main(){
+    Lstr lista = ls_cria();
+    str a = s_("abacaxi");
+    str b = s_("abacate");
+    lista->mem[0] = a;
+    lista->mem[1] = b;
+    s_imprime(lista->mem[0]);
+    s_imprime(lista->mem[1]);
 }
