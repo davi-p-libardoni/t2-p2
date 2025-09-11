@@ -2,20 +2,23 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 struct lstr
 {
-    int tam;
-    int cap;
-    int pos;
-    str *mem;
+    int tam; // quantidade de strings na lista
+    int tamb; // quantidade de bytes usados
+    int cap; // quantidade de bytes alocados para strings
+    int pos; // posição corrente
+    str mem[]; // memória
 };
 
 
 Lstr ls_cria(){
-    Lstr new = (Lstr*)malloc(64);
-    new->cap = 8;
+    Lstr new = (Lstr*)malloc(4*8+64);
+    new->cap = 64;
     new->tam = 0;
+    new->tamb = 0;
     new->pos = -1;
     return new;
 }
@@ -75,5 +78,8 @@ bool ls_recua(Lstr self){
 
 
 void ls_insere_antes(Lstr self, str cad){
-    
+    int newpos = self->pos - 1;
+    if(self->pos < 0) newpos = 0;
+    if(self->pos >= self->tam) newpos = self->tam;
+    //memmove();
 }
