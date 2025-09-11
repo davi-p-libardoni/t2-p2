@@ -14,8 +14,16 @@ struct lstr
     str *mem; // memória
 };
 
-static void ls_realloc(Lstr self,int newsize){
-
+static void ls_realloc(Lstr self){
+    int oldcap = self->cap;
+    if(self->cap == self->tam)
+        self->cap = self->cap * 1.5;
+    if(self->cap < self->tam * 0.5 && self->tam * 1.25 > 8)
+        self->cap = self->tam * 1.25;
+    
+    if(self->cap != oldcap){
+        self->mem = realloc(self->mem,self->cap);
+    }
 }
 
 Lstr ls_cria(){
@@ -84,13 +92,11 @@ bool ls_recua(Lstr self){
 
 void ls_insere_antes(Lstr self, str cad){
     int newpos = self->pos - 1;
-    if(self->pos < 0) newpos = 0;
+    if(self->pos <= 0) newpos = 0;
     if(self->pos >= self->tam) newpos = self->tam;
-    if(self->cap < self->tamb + cad.tamb){
-        ls_realloc(self,self->tamb + cad.tamb);
-    }
+    ls_realloc(self);
     if(self->tam > newpos){
-        // memmove();
+        memmove(self->mem+self->pos+1,self->mem+self->pos,sizeof(str)*(self->tam - self->pos));
     }
     self->mem[newpos] = cad;
     self->pos = newpos;
@@ -99,15 +105,43 @@ void ls_insere_antes(Lstr self, str cad){
 }
 
 void ls_insere_depois(Lstr self, str cad){
+    int newpos = self->pos + 1;
+    if(self->pos <= 0) newpos = 0;
+    if(self->pos >= self->tam) newpos = self->tam;
+    ls_realloc(self);
+    if(self->tam > newpos){
+        memmove(self->mem+self->pos+1,self->mem+self->pos+2,sizeof(str)*(self->tam - self->pos));
+    }
+}
 
+str ls_remove(Lstr self){
+
+}
+
+Lstr ls_sublista(Lstr self, int tam){
+
+}
+
+str ls_junta(Lstr self, str separador){
+
+}
+
+void ls_imprime(Lstr self){
+    ls_inicio(self);
+    for(ls_avanca(self);ls_avanca(self);)
+        s_imprime(ls_item(self));
+    ls_inicio(self);
 }
 
 int main(){
     Lstr lista = ls_cria();
     str a = s_("abacaxi");
     str b = s_("abacate");
-    lista->mem[0] = a;
-    lista->mem[1] = b;
-    s_imprime(lista->mem[0]);
-    s_imprime(lista->mem[1]);
+    // lista->mem[0] = a;
+    // lista->mem[1] = b;
+    // s_imprime(lista->mem[0]);
+    // s_imprime(lista->mem[1]);
+    ls_insere_depois(lista,a);
+    ls_insere_depois(lista,b);
+    ls_imprime(lista);
 }
