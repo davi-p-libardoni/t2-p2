@@ -55,7 +55,6 @@ Lstr ls_cria();
 // esta função destrói a lista, não as strings que ela contém
 void ls_destroi(Lstr self);
 
-
 // operações de acesso {{{1
 
 // retorna true se não houver nenhum elemento na lista

@@ -7,7 +7,6 @@
 struct lstr
 {
     int tam; // quantidade de strings na lista
-    // int tamb; // quantidade de bytes usados
     int cap; // quantidade de bytes alocados para strings
     int pos; // posição corrente
     int *div; // índice das separações entre strings 
@@ -27,17 +26,19 @@ static void ls_realloc(Lstr self){
 }
 
 Lstr ls_cria(){
-    Lstr new = malloc(sizeof(Lstr));
+    Lstr new = malloc(sizeof(struct lstr));
     new->cap = 8;
     new->tam = 0;
-    // new->tamb = 0;
     new->mem = malloc(8*sizeof(str));
     new->pos = -1;
     return new;
 }
 
 void ls_destroi(Lstr self){
-    //liberar as strings da lista primeiro
+    for(int i=0;i<self->tam;i++){
+        s_destroi(self->mem[i]);
+    }
+    free(self->mem);
     free(self);
 }
 
@@ -72,7 +73,7 @@ void ls_posiciona(Lstr self, int pos){
         ls_inicio(self);
         return;
     }
-    if(pos > self->tam){
+    if(pos >= self->tam){
         ls_final(self);
         return;
     }
@@ -91,7 +92,7 @@ bool ls_recua(Lstr self){
 
 
 void ls_insere_antes(Lstr self, str cad){
-    int newpos = self->pos - 1;
+    int newpos = self->pos;
     if(self->pos <= 0) newpos = 0;
     if(self->pos >= self->tam) newpos = self->tam;
     ls_realloc(self);
@@ -101,13 +102,12 @@ void ls_insere_antes(Lstr self, str cad){
     self->mem[newpos] = cad;
     self->pos = newpos;
     self->tam += 1;
-    // self->tamb += cad.tamb;
 }
 
 void ls_insere_depois(Lstr self, str cad){
     int newpos = self->pos + 1;
     if(self->pos < 0) newpos = 0;
-    if(self->pos > self->tam) newpos = self->tam;
+    if(self->pos >= self->tam) newpos = self->tam;
     ls_realloc(self);
     if(self->tam > newpos){
         memmove(self->mem+self->pos+2,self->mem+self->pos+1,sizeof(str)*(self->tam - self->pos - 1));
@@ -115,13 +115,13 @@ void ls_insere_depois(Lstr self, str cad){
     self->mem[newpos] = cad;
     self->pos = newpos;
     self->tam += 1;
-    // self->tamb += cad.tamb;
 }
 
 str ls_remove(Lstr self){
     str removida = s_copia(self->mem[self->pos]);
-    if(self->pos < self->tam-1){
-        memmove(self->mem + self->tam - self->pos - 1,self->mem + self->tam - self->pos,sizeof(str));
+    s_destroi(self->mem[self->pos]);
+    if(self->pos < self->tam - 1){
+        memmove(self->mem + self->pos, self->mem + self->pos + 1, sizeof(str) * (self->tam - self->pos - 1));
     }
     self->tam -= 1;
     return removida;
@@ -137,6 +137,7 @@ Lstr ls_sublista(Lstr self, int tam){
         ls_avanca(self);
     }while(self->pos < fim);
     new->tam = tam;
+    return new;
 }
 
 str ls_junta(Lstr self, str separador){
@@ -155,25 +156,4 @@ void ls_imprime(Lstr self){
         printf("\n");
     }
     ls_inicio(self);
-}
-
-int main(){
-    Lstr lista = ls_cria();
-    str ae = s_("abacaxi");
-    str a = s_copia(ae);
-    str be = s_("banana");
-    str b = s_copia(be);
-    str ce = s_("cacau");
-    str c = s_copia(ce);
-    str de = s_("damasco");
-    str d = s_copia(de);
-
-    ls_insere_depois(lista,a);
-    ls_insere_depois(lista,b);
-    ls_insere_depois(lista,c);
-    ls_insere_depois(lista,d);
-    ls_imprime(lista);
-
-    str cat = ls_junta(lista,s_(";"));
-    s_imprime(cat);
 }
