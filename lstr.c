@@ -118,7 +118,8 @@ void ls_insere_depois(Lstr self, str cad){
 }
 
 str ls_remove(Lstr self){
-    str removida = s_copia(self->mem[self->pos]);
+    //str removida = s_copia(self->mem[self->pos]);  // removida implementação com s_copia para não precisar dar free na string retornada
+    str removida = (str){.cap=0,.tamb=self->mem[self->pos].tamb,.tamc=self->mem[self->pos].tamc,.mem=self->mem[self->pos].mem};
     s_destroi(self->mem[self->pos]);
     if(self->pos < self->tam - 1){
         memmove(self->mem + self->pos, self->mem + self->pos + 1, sizeof(str) * (self->tam - self->pos - 1));
